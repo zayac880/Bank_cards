@@ -1,6 +1,6 @@
 import json
 from datetime import datetime
-
+import re
 
 bank_file = 'operations.json'
 
@@ -26,7 +26,20 @@ def hide_account(account):
     Скрывает номер счета или карты.
     :param account: Номер счета или карты.
     """
-    return f"{account[:-14]} *** *** {account[-4:]}"
+    if "Счет" in account:
+        account_nums = re.findall(r'\d+', account)
+        if len(account_nums) == 1:
+            # В случае, если номер счета содержит цифры
+            return f"{account[:4]} ** {account[-4:]}"
+        # В случае, если номер счета содержит буквы и цифры
+        letters = ''.join(re.findall(r'[a-zA-Z]', account))
+        nums = ''.join(re.findall(r'\d+', account))
+        return f"{letters} ** {nums[-4:]}"
+    else:
+        # В случае, если номер карты содержит буквы и цифры
+        letters = ''.join(re.findall(r'[a-zA-Z]', account))
+        nums = ''.join(re.findall(r'\d+', account))
+        return f"{letters} {nums[:4]} {nums[4:6]}** **** {nums[-4:]}"
 
 
 def print_operation(operation):
@@ -52,7 +65,7 @@ def process_operations(operations):
     Обработка списка банковских операций.
     :param operations: Список словарей, содержащих информацию о банковских операциях.
     """
-    for operation in reversed(operations[-5:]):  # выводим только последние 5 операций
+    for operation in reversed(operations[:5]):  # выводим только последние 5 операций
         print_operation(operation)
 
 
