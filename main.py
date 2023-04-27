@@ -26,6 +26,10 @@ def hide_account(account):
     Скрывает номер счета или карты.
     :param account: Номер счета или карты.
     """
+    if not account:
+        # Если переданный аргумент пустой, возвращаем пустую строку
+        return f"{account}"
+
     if "Счет" in account:
         account_nums = re.findall(r'\d+', account)
         if len(account_nums) == 1:
@@ -40,6 +44,7 @@ def hide_account(account):
         letters = ''.join(re.findall(r'[a-zA-Z]', account))
         nums = ''.join(re.findall(r'\d+', account))
         return f"{letters} {nums[:4]} {nums[4:6]}** **** {nums[-4:]}"
+
 
 
 def print_operation(operation):
